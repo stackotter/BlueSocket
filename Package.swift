@@ -24,8 +24,7 @@ struct BuildInfo {
     let targets: [Target]
 }
 
-
-let libraryBuildInfo = BuildInfo(
+let buildInfo = BuildInfo(
     product: [
         .library(
             name: "Socket",
@@ -54,28 +53,6 @@ let libraryBuildInfo = BuildInfo(
     ]
 )
 
-let toolsBuildInfo = BuildInfo(
-    product: [
-        .executable(
-            name: "BlueSocketTestServer",
-            targets: ["BlueSocketTestServer"]),
-        .executable(
-            name: "BlueSocketTestClient",
-            targets: ["BlueSocketTestClient"]),
-    ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.4.1"),
-    ],
-    targets: [
-        .target(name: "BlueSocketTestServer",
-                dependencies: ["BlueSocketTestCommonLibrary", "ArgumentParser", ]
-               ),
-        .target(name: "BlueSocketTestClient",
-                dependencies: ["BlueSocketTestCommonLibrary", "ArgumentParser" ]
-               ),
-    ]
-)
-
 var products: [Product] = [
     .library(
         name: "Socket",
@@ -84,26 +61,7 @@ var products: [Product] = [
     .library(
         name: "BlueSocketTestCommonLibrary",
         targets: ["BlueSocketTestCommonLibrary"]),
-    ]
-#if swift(>=5.2)
-products.append(contentsOf: [
-    .executable(
-        name: "BlueSocketTestServer",
-        targets: ["BlueSocketTestServer"]),
-    .executable(
-        name: "BlueSocketTestClient",
-        targets: ["BlueSocketTestClient"])
-])
-#endif
-
-let buildInfo: BuildInfo
-#if swift(>=5.2)
-    buildInfo = BuildInfo(product: libraryBuildInfo.product + toolsBuildInfo.product,
-                          dependencies: libraryBuildInfo.dependencies + toolsBuildInfo.dependencies,
-                          targets: libraryBuildInfo.targets + toolsBuildInfo.targets)
-#else
-    buildInfo = BuildInfo(product: libraryBuildInfo.product, dependencies: libraryBuildInfo.dependencies, targets: libraryBuildInfo.targets)
-#endif
+]
 
 #if os(Linux) || os(macOS) || os(iOS) || os(tvOS)
 let package = Package(
